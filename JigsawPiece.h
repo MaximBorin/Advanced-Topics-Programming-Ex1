@@ -1,5 +1,12 @@
 #pragma once
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+
 //Represents one jigsaw piece
 struct JigsawPiece
 {
@@ -16,3 +23,12 @@ struct JigsawPiece
 		//Otherwise, this piece was just created and nothing was done to it
 		bool isInitialized = false;
 };
+
+
+//Returns a jigsaw piece from an input line.
+//If the line is in an incorrect format, the piece is returned uninitialized
+JigsawPiece GetPieceFromInputLine(string line);
+
+
+//Get jigsaw pieces form an input file
+JigsawPiece* GetJigsawPieces(string inputfilePath, int* outNumElements);

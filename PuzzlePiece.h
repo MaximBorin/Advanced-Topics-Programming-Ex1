@@ -14,4 +14,3 @@ public:
 	~PuzzlePiece();
 	void printMe();
 };
-

@@ -11,3 +11,4 @@ int Solution::get_width() { return _width; }
 void Solution::set_compatibility(bool bool_var) { _compatibility = bool_var; }
 
 bool Solution::get_compatibility() { return _compatibility; }
+

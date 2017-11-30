@@ -16,3 +16,5 @@ private:
 	bool _compatibility;
 	//int** _board;
 };
+
+

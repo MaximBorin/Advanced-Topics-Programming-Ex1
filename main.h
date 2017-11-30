@@ -1,5 +1,5 @@
 #pragma once
 
-#include "Puzzle.h"
-#include "JigsawPiecesStats.h"
+#include "PuzzlePiecesStats.h"
 #include "auxiliary.h"
+

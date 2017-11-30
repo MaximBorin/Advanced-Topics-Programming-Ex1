@@ -15,6 +15,8 @@ bool is_puzzle_solved = false;
 
 
 // solution methods
+int how_many_decompositions(int numOf_pieces);
+void initialize_decomposition_array(Solution** decomps, int numOf_pieces);
 void init_solution(int** solution, int height, int width);
 void init_frame(int** solution, int height, int width);
 void print_solution(int** solution, int height, int width);
@@ -555,3 +557,31 @@ void solve_puzzle(PuzzlePiece** puzzle, int numOf_pieces, Solution** decomps, in
 	}
 }
 
+
+
+int how_many_decompositions(int numOf_pieces) {
+
+	int i;
+	int how_many_decomps = 0;
+
+	for (i = 1; i*i < numOf_pieces; i++) { if (numOf_pieces % i == 0) { how_many_decomps += 2; } }
+	if (i*i == numOf_pieces) { how_many_decomps += 1; }
+
+	return how_many_decomps;
+}
+
+void initialize_decomposition_array(Solution** decomps, int numOf_pieces) {
+
+	int i;
+	int decomp_index = 0;
+
+	for (i = 1; i*i < numOf_pieces; i++) {
+		if (numOf_pieces % i == 0) {
+			decomps[decomp_index++] = new Solution(numOf_pieces / i, i);
+			decomps[decomp_index++] = new Solution(i, numOf_pieces / i);
+		}
+	}
+	if (i*i == numOf_pieces) {
+		decomps[decomp_index++] = new Solution(i, i);
+	}
+}

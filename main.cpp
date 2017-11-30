@@ -35,14 +35,9 @@ int main() {
 	
 	print_pieces(puzzle, numOf_pieces);
 
-	int numOf_decomps = 4;
+	int numOf_decomps = how_many_decompositions(numOf_pieces);
 	Solution** decomps = new Solution*[numOf_decomps];
-
-	decomps[0] = &(Solution(15, 1));
-	decomps[1] = &(Solution(5, 3));
-	decomps[2] = &(Solution(3, 5));
-	decomps[3] = &(Solution(1, 15));
-
+	initialize_decomposition_array(decomps, numOf_pieces);
 
 	solve_puzzle(puzzle, numOf_pieces, decomps, numOf_decomps);
 	

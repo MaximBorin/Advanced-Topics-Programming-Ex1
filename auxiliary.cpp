@@ -1,4 +1,11 @@
 #include "auxiliary.h"
+#define MAX_FIT 100
+
+// GLOBALS INITIALIZED
+int** final_solution = NULL;
+int final_height = 0;
+int final_width = 0;
+bool is_puzzle_solved = false;
 
 
 // SOLUTION METHODS
@@ -30,28 +37,26 @@ void init_frame(int** solution, int height, int width) {
 		}
 }
 
-void print_solution(int** solution, int height, int width) {
+//void print_solution(int** solution, int height, int width) {
+//
+//		int i, j;
+//		for (i = 1; i < height + NON_FRAME_FACTOR; i++) {
+//				for (j = 1; j < width + NON_FRAME_FACTOR; j++) { std::cout << solution[i][j] << " "; }
+//				std::cout << "\n" << std::endl;
+//		}
+//		std::cout << "\n\n" << std::endl;
+//}
 
-		int i, j;
-		for (i = 1; i < height + NON_FRAME_FACTOR; i++) {
-				for (j = 1; j < width + NON_FRAME_FACTOR; j++) { std::cout << solution[i][j] << " "; }
-				std::cout << "\n" << std::endl;
-		}
-		std::cout << "\n\n" << std::endl;
-}
+//void print_solution_and_frame(int** solution, int height, int width) {
+//		int i, j;
+//		for (i = 0; i < height + FRAME_FACTOR; i++) {
+//				for (j = 0; j < width + FRAME_FACTOR; j++) { std::cout << solution[i][j] << " "; }
+//				std::cout << "\n" << std::endl;
+//		}
+//		std::cout << "\n\n" << std::endl;
+//}
 
-void print_solution_and_frame(int** solution, int height, int width) {
-		int i, j;
-		for (i = 0; i < height + FRAME_FACTOR; i++) {
-				for (j = 0; j < width + FRAME_FACTOR; j++) { std::cout << solution[i][j] << " "; }
-				std::cout << "\n" << std::endl;
-		}
-		std::cout << "\n\n" << std::endl;
-}
-
-
-void print_solution_to_file(int** solution, int height, int width, ofstream* outputFile)
-{
+void print_solution_to_file(int** solution, int height, int width, ofstream* outputFile) {
 
 		int i, j;
 		for (i = 1; i < height + NON_FRAME_FACTOR; i++)
@@ -63,7 +68,6 @@ void print_solution_to_file(int** solution, int height, int width, ofstream* out
 				PrintMsg(line, outputFile);
 		}
 }
-
 
 void free_solution(int** solution, int height, int width) {
 		int i;
@@ -241,7 +245,7 @@ bool solve_decomp(int numOf_pieces, PuzzlePiece** puzzle, int** solution, int he
 				next_position(&copy_row, &copy_column, height, width);
 
 				// print solution
-				print_solution(copy_solution, height, width);
+				// print_solution(copy_solution, height, width);
 
 				// try to solve after applying piece, and updating: position repository, solution
 				bool does_piece_lead_to_puzzle_completion = recursion_solve(puzzle, numOf_pieces, copy_solution, copy_repository, copy_row, copy_column, height, width);
@@ -267,131 +271,6 @@ bool solve_decomp(int numOf_pieces, PuzzlePiece** puzzle, int** solution, int he
 		return false;
 }
 
-
-bool recursion_solve(PuzzlePiece** puzzle, int numOf_pieces, int** solution, bool* repository, int row, int column, int height, int width) {
-
-		if (is_repository_exhausted(repository, numOf_pieces)) {
-				// if so - deep-copy solution into global final solution, and set the global "is_puzzle_solved" to "true".
-				int j, k;
-				final_height = height;
-				final_width = width;
-				final_solution = new int*[height + FRAME_FACTOR];
-				for (j = 0; j < height + FRAME_FACTOR; j++) {
-						final_solution[j] = new int[width + FRAME_FACTOR];
-						for (k = 0; k < width + FRAME_FACTOR; k++) {
-								final_solution[j][k] = solution[j][k];
-						}
-				}
-				is_puzzle_solved = true;
-		}
-
-		if (is_puzzle_solved) {
-				return true;
-		}
-
-
-		// general initialization index
-		int i;
-
-		// create an array of position fitting pieces
-
-		// 1. initialize fit_array
-		bool* fit_array = new bool[numOf_pieces];
-		for (i = 0; i < numOf_pieces; i++) { fit_array[i] = false; }
-
-		// 2. find how many fitting pieces
-		int numOf_position_fitting_pieces = how_many_position_fitting_pieces(solution, row, column, repository, numOf_pieces, puzzle, height, width, fit_array);
-		int* position_fitting_pieces = new int[numOf_position_fitting_pieces];
-
-		// 3. if number of fitting pieces is zero, return false
-		std::cout << "num of fitting pieces: " << numOf_position_fitting_pieces << "\n" << std::endl;
-		if (numOf_position_fitting_pieces == 0) {
-
-				delete[] fit_array;
-				delete[] position_fitting_pieces;
-				return false;
-		}
-
-		// 4. else - apply fitting pieces to the respective array, and try to solve after applying each to the solution in position
-
-		// assign piece indice to fitting pieces array
-		int fitting_pieces_index = 0;
-		for (i = 0; i < numOf_pieces; i++) {
-				if (fit_array[i]) {
-						position_fitting_pieces[fitting_pieces_index] = i + 1;
-						// CLARIFICATION - fit_array holds "true" for every piece index that fits
-						// since for each piece: ID = index + 1, hence the i + 1 transformation
-						fitting_pieces_index++;
-				}
-		}
-
-		// 5. fit array has done its job, thus freed
-		delete[] fit_array;
-
-		// 6. ALL RECCURSION PARAMETERS SET - START THE MAGIC
-
-
-
-		// 7. selected piece identifier
-		int position_fitting_piece;
-
-		// 8. try to solve with each
-		for (i = 0; i < numOf_position_fitting_pieces; i++) {
-
-				int j, k;
-				// 8.1 choose piece from fitting array
-				position_fitting_piece = position_fitting_pieces[i];
-
-				// 8.2.1 create deep copy of repository
-				bool* copy_repository = new bool[numOf_pieces];
-				for (j = 0; j < numOf_pieces; j++) { copy_repository[j] = repository[j]; }
-
-				// 8.2.2 update according to piece choice
-				copy_repository[position_fitting_piece - 1] = false;
-
-				// 8.3.1 create deep copy of solution
-				int** copy_solution = new int*[height + FRAME_FACTOR];
-				for (j = 0; j < height + FRAME_FACTOR; j++) {
-						copy_solution[j] = new int[width + FRAME_FACTOR];
-						for (k = 0; k < width + FRAME_FACTOR; k++) {
-								copy_solution[j][k] = solution[j][k];
-						}
-				}
-
-				// 8.3.2 update solution according to piece choice
-				copy_solution[row][column] = position_fitting_piece;
-
-				// 8.4.1 create copy of position: row, column
-				int copy_row = row;
-				int copy_column = column;
-				// 8.4.2 update position copy
-				next_position(&copy_row, &copy_column, height, width);
-
-				// print current solution
-				print_solution(copy_solution, height, width);
-
-				// 8.5 try to solve after applying piece, and updating: position repository, solution
-				bool does_piece_lead_to_puzzle_completion = recursion_solve(puzzle, numOf_pieces, copy_solution, copy_repository, copy_row, copy_column, height, width);
-				// if any of the pieces leads to solution - the returned value will be "true"
-				// only after all pieces are exhausted - false will be returned
-
-				// free local copy of memory anyway
-				free_solution(copy_solution, height, width);
-				delete[] copy_repository;
-
-
-				if (does_piece_lead_to_puzzle_completion) {
-						// if the condition is fulfilled, "position_fitting_pieces" needs be freed now.
-						delete[] position_fitting_pieces;
-						return true;
-				}
-		}
-
-		// 9. only after all pieces have been tried, delete "position_fitting_pieces", and then return false
-		delete[] position_fitting_pieces;
-		return false;
-}
-
 bool is_repository_exhausted(bool* repository, int numOf_pieces) {
 		int i;
 		for (i = 0; i < numOf_pieces; i++) {
@@ -400,11 +279,11 @@ bool is_repository_exhausted(bool* repository, int numOf_pieces) {
 		return true;
 }
 
-
 int how_many_position_fitting_pieces(int** solution, int row, int column, bool* repository, int numOf_pieces, PuzzlePiece** puzzle, int height, int width, bool* fit_array) {
 
 		int res = 0;
 		int i;
+		bool piece_duplicate_already_in_fit_array = false;
 
 		for (i = 0; i < numOf_pieces; i++) //for each piece in collection
 		{
@@ -468,8 +347,19 @@ int how_many_position_fitting_pieces(int** solution, int row, int column, bool* 
 
 						if (west_fits && north_fits && east_fits && south_fits) // if all sides fit
 						{
+							int j;
+							for (j = 0; j < i; j++) {
+								if (check_identicallity(puzzle[i], puzzle[j])) {
+									piece_duplicate_already_in_fit_array = true;
+									break;
+								}
+							}
+
+							if (!piece_duplicate_already_in_fit_array) {
 								fit_array[puzzle[i]->ID - 1] = true;
 								res += 1;
+							}
+							piece_duplicate_already_in_fit_array = false;
 						}
 				}
 		}
@@ -478,17 +368,81 @@ int how_many_position_fitting_pieces(int** solution, int row, int column, bool* 
 }
 
 
+//should return true if pieces are identical, false otherwise
+bool check_identicallity(PuzzlePiece* piece1, PuzzlePiece* piece2) {
+	if (piece1->left != piece2->left) { return false; }
+	if (piece1->top != piece2->top) { return false; }
+	if (piece1->right != piece2->right) { return false; }
+	if (piece1->bottom != piece2->bottom) { return false; }
+	return true;
+}
+
 void next_position(int* row, int* column, int height, int width) {
-		if (*row == height + NON_FRAME_FACTOR - 1) { *column += 1; *row = 1; }
-		else { *row += 1; }
+
+// void next_position(int* row, int* column, int height, int width, int** solution, bool* repository, int numOf_pieces, PuzzlePiece** puzzle, bool* fit_array) {
+
+// 	int next_row;
+// 	int next_column;
+
+// 	int current_min_num_of_fitting_pieces = MAX_FIT;
+
+// 	int candidate_count = 0;
+// 	int i, j;
+// 	int** board = new int*[height + FRAME_FACTOR];
+// 	for (i = 0; i < height + FRAME_FACTOR; i++) {
+// 		board[i] = new int[width + FRAME_FACTOR];
+// 	}
+	
+// 	bool** candidate_board_positions = new bool*[height + FRAME_FACTOR];
+// 	for (i = 0; i < height + FRAME_FACTOR; i++) {
+// 		candidate_board_positions[i] = new bool[width + FRAME_FACTOR];
+// 	}
+
+// 	// count candidate next positions
+// 	// instantiate bool array accordingly
+// 	for (i = 1; i < height + NON_FRAME_FACTOR; i++) {
+// 		for (j = 1; j < width + NON_FRAME_FACTOR; j++) {
+// 			int adjacency_count = 0;
+// 			if (solution[i-1][j] != 0) { adjacency_count++; }
+// 			if (solution[i][j-1] != 0) { adjacency_count++; }
+// 			if (solution[i+1][j] != 0) { adjacency_count++; }
+// 			if (solution[i][j+1] != 0) { adjacency_count++; }
+// 			if (adjacency_count >= 2) {
+// 				candidate_board_positions[i][j] = true;
+// 				candidate_count++;
+// 			}
+// 			else {
+// 				candidate_board_positions[i][j] = false;
+// 			}
+// 			adjacency_count = 0;
+// 		}
+// 	}
+
+// 	for (i = 1; i < height + NON_FRAME_FACTOR; i++) {
+// 		for (j = 1; j < width + NON_FRAME_FACTOR; j++) {
+// 			if (candidate_board_positions[i][j]) {
+// 				int num_of_this_position_fitting_pieces = how_many_position_fitting_pieces(solution, i, j, repository, numOf_pieces, puzzle, height, width, fit_array);
+// 				if (num_of_this_position_fitting_pieces < current_min_num_of_fitting_pieces) {
+// 					next_row = i;
+// 					next_column = j;
+// 				}
+// 			}
+// 		}
+// 	}
+
+// 		*row = next_row;
+// 		*column = next_column;
+
+	// change row and column accordingly serially
+
+	if (*row == height + NON_FRAME_FACTOR - 1) { *column += 1; *row = 1; }
+	else { *row += 1; }
 }
 
 
+// MAIN SOLVE METHODS
 
-
-
-void solve_puzzle(PuzzlePiece** puzzle, int numOf_pieces, Solution** decomps, int numOf_decomps)
-{
+void solve_puzzle(PuzzlePiece** puzzle, int numOf_pieces, Solution** decomps, int numOf_decomps) {
 		int decomp_index;
 		int** solution;
 
@@ -505,9 +459,8 @@ void solve_puzzle(PuzzlePiece** puzzle, int numOf_pieces, Solution** decomps, in
 				int width = decomps[decomp_index]->get_width();
 
 				if (puzzle_solution_dimennsion_pieces_compatibility_check(*decomps[decomp_index], puzzle, numOf_pieces) == false) {
-						std::cout << "these dimensions - height: " << height << ", width: " << width << " - are not compatible with the pieces \n\n" << std::endl;
+						//std::cout << "these dimensions - height: " << height << ", width: " << width << " - are not compatible with the pieces \n\n" << std::endl;
 						decomps[decomp_index]->set_compatibility(false);
-						system("pause");
 						continue;
 				}
 
@@ -520,7 +473,7 @@ void solve_puzzle(PuzzlePiece** puzzle, int numOf_pieces, Solution** decomps, in
 
 				// PRINT INITIAL SOLUTION WITH FRAME
 				std::cout << "initial solution with frame is: \n" << std::endl;
-				print_solution_and_frame(solution, height, width);
+				//print_solution_and_frame(solution, height, width);
 
 				// SOLVE PUZZLE IN CURRENT DECOMPOSITION
 				solve_decomp(numOf_pieces, puzzle, solution, height, width);
@@ -534,7 +487,131 @@ void solve_puzzle(PuzzlePiece** puzzle, int numOf_pieces, Solution** decomps, in
 		}
 }
 
+bool recursion_solve(PuzzlePiece** puzzle, int numOf_pieces, int** solution, bool* repository, int row, int column, int height, int width) {
 
+	if (is_repository_exhausted(repository, numOf_pieces)) {
+		// if so - deep-copy solution into global final solution, and set the global "is_puzzle_solved" to "true".
+		int j, k;
+		final_height = height;
+		final_width = width;
+		final_solution = new int*[height + FRAME_FACTOR];
+		for (j = 0; j < height + FRAME_FACTOR; j++) {
+			final_solution[j] = new int[width + FRAME_FACTOR];
+			for (k = 0; k < width + FRAME_FACTOR; k++) {
+				final_solution[j][k] = solution[j][k];
+			}
+		}
+		is_puzzle_solved = true;
+	}
+
+	if (is_puzzle_solved) {
+		return true;
+	}
+
+	// general initialization index
+	int i;
+
+	// create an array of position fitting pieces
+
+	// 1. initialize fit_array
+	bool* fit_array = new bool[numOf_pieces];
+	for (i = 0; i < numOf_pieces; i++) { fit_array[i] = false; }
+
+	// 2. find how many fitting pieces - duplicates avoided
+	int numOf_position_fitting_pieces = how_many_position_fitting_pieces(solution, row, column, repository, numOf_pieces, puzzle, height, width, fit_array);
+	int* position_fitting_pieces = new int[numOf_position_fitting_pieces];
+	
+	// 3. if number of fitting pieces is zero, return false
+	/*std::cout << "num of fitting pieces: " << numOf_position_fitting_pieces << "\n" << std::endl;*/
+	if (numOf_position_fitting_pieces == 0) {
+
+		delete[] fit_array;
+		delete[] position_fitting_pieces;
+		return false;
+	}
+
+	// 4. else - apply fitting pieces to the respective array, and try to solve after applying each to the solution in position
+
+	// assign piece indice to fitting pieces array
+	int fitting_pieces_index = 0;
+	for (i = 0; i < numOf_pieces; i++) {
+		if (fit_array[i]) {
+			position_fitting_pieces[fitting_pieces_index] = i + 1;
+			// CLARIFICATION - fit_array holds "true" for every piece index that fits
+			// since for each piece: ID = index + 1, hence the i + 1 transformation
+			fitting_pieces_index++;
+		}
+	}
+
+	// 5. fit array has done its job, thus freed
+	delete[] fit_array;
+
+	// 6. ALL RECCURSION PARAMETERS SET - START THE MAGIC
+
+
+
+	// 7. selected piece identifier
+	int position_fitting_piece;
+
+	// 8. try to solve with each
+	for (i = 0; i < numOf_position_fitting_pieces; i++) {
+
+		int j, k;
+		// 8.1 choose piece from fitting array
+		position_fitting_piece = position_fitting_pieces[i];
+
+		// 8.2.1 create deep copy of repository
+		bool* copy_repository = new bool[numOf_pieces];
+		for (j = 0; j < numOf_pieces; j++) { copy_repository[j] = repository[j]; }
+
+		// 8.2.2 update according to piece choice
+		copy_repository[position_fitting_piece - 1] = false;
+
+		// 8.3.1 create deep copy of solution
+		int** copy_solution = new int*[height + FRAME_FACTOR];
+		for (j = 0; j < height + FRAME_FACTOR; j++) {
+			copy_solution[j] = new int[width + FRAME_FACTOR];
+			for (k = 0; k < width + FRAME_FACTOR; k++) {
+				copy_solution[j][k] = solution[j][k];
+			}
+		}
+
+		// 8.3.2 update solution according to piece choice
+		copy_solution[row][column] = position_fitting_piece;
+
+		// 8.4.1 create copy of position: row, column
+		int copy_row = row;
+		int copy_column = column;
+		// 8.4.2 update position copy
+		next_position(&copy_row, &copy_column, height, width);
+
+		// print current solution
+		//print_solution(copy_solution, height, width);
+
+		// 8.5 try to solve after applying piece, and updating: position repository, solution
+		bool does_piece_lead_to_puzzle_completion = recursion_solve(puzzle, numOf_pieces, copy_solution, copy_repository, copy_row, copy_column, height, width);
+		// if any of the pieces leads to solution - the returned value will be "true"
+		// only after all pieces are exhausted - false will be returned
+
+		// free local copy of memory anyway
+		free_solution(copy_solution, height, width);
+		delete[] copy_repository;
+
+
+		if (does_piece_lead_to_puzzle_completion) {
+			// if the condition is fulfilled, "position_fitting_pieces" needs be freed now.
+			delete[] position_fitting_pieces;
+			return true;
+		}
+	}
+
+	// 9. only after all pieces have been tried, delete "position_fitting_pieces", and then return false
+	delete[] position_fitting_pieces;
+	return false;
+}
+
+
+// DECOMPOSITION METHODS
 
 int how_many_decompositions(int numOf_pieces) {
 
@@ -561,4 +638,15 @@ void initialize_decomposition_array(Solution** decomps, int numOf_pieces) {
 		if (i*i == numOf_pieces) {
 				decomps[decomp_index++] = new Solution(i, i);
 		}
+}
+
+bool check_decompositions_puzzleSet_compatibility(Solution** decomps, int numOf_decomps) {
+	
+	int i;
+
+	for (i = 0; i < numOf_decomps; i++) {
+		if (decomps[i]->get_compatibility() == true) { return true;  }
+	}
+
+	return false;
 }

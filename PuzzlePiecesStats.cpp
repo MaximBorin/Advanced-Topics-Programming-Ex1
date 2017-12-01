@@ -45,7 +45,7 @@ int GetEdgesCountByValType(PuzzlePiecesStats stats, EdgeTypeValueIndexes edgeVal
 
 bool IsValidJigsawPiecesStats(PuzzlePiecesStats stats, ofstream* outputFile)
 {
-		int res = true;
+		bool res = true;
 
 		int straightEdges = GetEdgesCountByValType(stats, ID_STRAIGHT);
 		int maleEdges = GetEdgesCountByValType(stats, ID_MALE);

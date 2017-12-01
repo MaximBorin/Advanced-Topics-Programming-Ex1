@@ -5,10 +5,10 @@ public:
 	Solution(int height, int width);
 	~Solution();
 
-	int Solution::get_height();
-	int Solution::get_width();
-	void Solution::set_compatibility(bool bool_var);
-	bool Solution::get_compatibility();
+	int get_height();
+	int get_width();
+	void set_compatibility(bool bool_var);
+	bool get_compatibility();
 
 private:
 	int _height;
@@ -16,3 +16,5 @@ private:
 	bool _compatibility;
 	//int** _board;
 };
+
+

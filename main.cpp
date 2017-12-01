@@ -69,17 +69,15 @@ int main(int argc, char** argv)
 		//Attempt to solve the jigsaw puzzle
 		solve_puzzle(pieces, numElements, decomps, numOf_decomps);
 
-		//If neither of the solution decompositions fit the puzzle set (I.E - num_of straight top did not fit any decomposition etc..)
-		bool compatibility = check_decompositions_puzzleSet_compatibility(decomps, numOf_decomps);
-
-		if (compatibility == false || !is_puzzle_solved) //If not compitable or couldn't be solved, print error
+		if (!is_puzzle_solved) //If couldn't be solved, print error
 				PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
 		
 		else //If succesful, print solution
+		{
 				print_solution_to_file(final_solution, final_height, final_width, &outputFile);
-
-			// FREE SOLUTION MEMORY
-			free_solution(final_solution, final_height);
+				free_solution(final_solution, final_height); //Free the memory of the final solution
+		}
+			
 	}
 
 	// FREE PUZZLE MEMORY

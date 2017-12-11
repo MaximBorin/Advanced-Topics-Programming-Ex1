@@ -1,87 +1,214 @@
-#include "main.h"
+#include "Position.h"
+#include "Repository.h"
+#include "Solution.h"
+#include "PuzzlePiece.h"
+#include "Auxiliary.h"
+#include <iostream>
 
-int main(int argc, char** argv)
-{
-	int numElements;
-	PuzzlePiece** pieces;
-	ifstream inputFile; //The input file stream
-	ofstream outputFile; //The output file stream
-	bool isValidPieces;
-	PuzzlePiecesStats stats;
+#define TEST_MODE 30
+#define RUN_MODE 40
 
-	if (argc != 3)
-	{
-		return -1; //Expected 3 argumetns
+int main() {
+
+	int mode = TEST_MODE;
+	int i = 1;
+
+	std::vector<PuzzlePiece> puzzle_set_input;
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, -1));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, -1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 1, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, -1));
+
+	// i = 20
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, -1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 1, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, -1));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, -1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 1, 0, 0));
+
+	// i = 40
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, -1));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, -1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 1, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+
+	// i = 60
+
+	/*
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, -1));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, -1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 1, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, -1));
+
+	// i = 80
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, -1, 1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 0, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, -1));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, -1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 1, 1, 0, 0));
+
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, -1, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 1, 1, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, -1, 0, 0, 0));
+	puzzle_set_input.push_back(PuzzlePiece(i++, 0, 0, 0, 0));
+
+	// i = 90
+
+	*/
+	unsigned index;
+	for (index = 0; index < puzzle_set_input.size(); index++) {
+		puzzle_set_input[index].set_piece_type_and_symetry_factor();
 	}
 
 
-	//The path of the input file is assumed to be the first command line paramter
-	string inputFilePath(argv[1]);
+	// TEST MODE
 
-	//The path of the input file is assumed to be the second command line paramter
-	string outputFilePath(argv[2]);
+	if (mode == TEST_MODE) {
 
+		Repository repository(puzzle_set_input, puzzle_set_input.size());
 
-	try
-	{
-		outputFile.open(outputFilePath);
-	}
-	catch (std::system_error& e)
-	{
-		//Impossible to print exception in opening output file, because exception is suppsoed to be printed to the output file
-		cerr << "Failed to open output file: " << outputFilePath << ". Exception: " << e.code().message();
-		return -1;
-	}
-
-	try
-	{
-		inputFile.open(inputFilePath);
-	}
-	catch (std::system_error& e)
-	{
-		PrintMsg("Failed to open input file: " + inputFilePath + ". Exception: " + e.code().message(), &outputFile);
-		return -1;
-	}
-
-
-	//Get jigsaw pieces from the input file
-	numElements = 0;
-	pieces = GetPuzzlePiecesFromInputFile(&inputFile, &outputFile, &numElements); //If returns, assumed that pieces are properly initialized
-
-	if (pieces == NULL)
-		return -1; //Encountered error during parsing and already printed it
-
-	//Get statistics about the jigsaw pieces
-	stats = GetJigsawPiecesStats(pieces, numElements);
-
-	//Validate the stats for a genearl type of puzzle (without assuming number of rows/columns)
-	isValidPieces = IsValidJigsawPiecesStats(stats, &outputFile);
-
-
-	//Attempt to solve the puzzle only if the pieces are valid
-	if (isValidPieces == true)
-	{
-		//Parameters: pieces, numElements
-		int numOf_decomps = how_many_decompositions(numElements);
-		Solution** decomps = new Solution*[numOf_decomps];
-		initialize_decomposition_array(decomps, numElements);
-
-		//Attempt to solve the jigsaw puzzle
-		solve_puzzle(pieces, numElements, decomps, numOf_decomps);
-
-		if (!is_puzzle_solved) //If couldn't be solved, print error
-				PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
 		
-		else //If succesful, print solution
-		{
-				print_solution_to_file(final_solution, final_height, final_width, &outputFile);
-				free_solution(final_solution, final_height); //Free the memory of the final solution
+		int height = 10;
+		int width = 6;
+
+		Solution solution(repository, height, width, true);
+		
+		// check algorithm step
+		solution.algorithm_step();
+		
+		bool is_solved = solution.is_solved();
+
+		if (is_solved) {
+			std::cout << "puzzle solved!\n\n";
 		}
-			
+		
+
+		system("pause");
+		return 0;
 	}
 
-	// FREE PUZZLE MEMORY
-	delete[] pieces;
+	// RUN MODE
 
-	return 0;
+	else  {
+		/*
+		// SET INPUT PARAMETERS
+
+		int i = 0;
+		
+
+		Repository repository(puzzle_set_input, numOf_pieces);
+		bool rotatable = true;
+
+		// initialize decompositions
+		int numOf_decomps = how_many_decompositions(numOf_pieces, rotatable);
+		int** decomp_array = new int*[numOf_decomps];
+		for (i = 0; i < numOf_decomps; i++) { decomp_array[i] = new int[2]; }
+		initialize_decomp_array(decomp_array, numOf_pieces);
+
+
+
+		// TRY TO SOLVE BY EACH DECOMPOSITION
+
+		for (i = 0; i < numOf_decomps; i++) {
+			int height = decomp_array[i][0];
+			int width = decomp_array[i][1];
+			Solution solution(repository, height, width, true);
+			Solution::set_solved(false);
+
+			solution.algorithm_step();
+			if (Solution::is_solved()) {
+				std::cout << "puzzle solved!\n\n" << std::endl;
+				//print solution to file
+				break;
+			}
+		}
+		std::cout << "puzzle unsolvable\n\n" << std::endl;
+		//print error to file
+		system("pause");
+		return 0;
+		*/
+	}
+
+	//end of RUN MODE SECTION
 }

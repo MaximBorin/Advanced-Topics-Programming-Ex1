@@ -9,21 +9,41 @@ int main(int argc, char** argv)
 		bool isValidPieces;
 		PuzzlePiecesStats stats;
 		bool rotatable = false;  //Whether pieces can be rotated
+		string inputFilePath;
+		string outputFilePath;
 
 		if (argc < 3 || argc > 4) //Expects minimum of 3 arguments and maximum of 4
 		{
 				return -1;
 		}
 
+		bool isReadInputPath = false; //Helper for parsing. Set to true after reading input path
 
-		//The path of the input file is assumed to be the first command line paramter
-		string inputFilePath(argv[1]);
+		for (int i = 1; i < argc; i++)
+		{
+				string arg(argv[i]); //Convert to string for string vs. string compare
+				if (argc == 4 && arg == "-rotate") //Only tries to read -rotate paramter if there are 3 argumetns
+				{
+						rotatable = true;
+						continue;
+				}
+						
+				//Assumes that input path will always come before output path, regardless of where -rotate is placed
+				if (isReadInputPath) //If already read the input path argument
+				{
+						outputFilePath = arg;
+				}
+				else //Haven't read input path argument yet
+				{
+						inputFilePath = arg;
+						isReadInputPath = true;
+				}
+						
 
-		//The path of the input file is assumed to be the second command line paramter
-		string outputFilePath(argv[2]);
+		}
 
-		if (argc == 4 && argv[3] == "-rotate")
-				rotatable = true;
+
+
 
 		try
 		{

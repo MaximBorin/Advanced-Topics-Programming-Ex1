@@ -11,23 +11,23 @@ PuzzlePiecesStats GetJigsawPiecesStats(PuzzlePiece** pieces, int numElements)
 
 				//Note: The value that needs to be incremented is always at index +1 compared to value of the edge
 				//For example: Female side is value -1 which in the array is at index 0
-				stats.rightEdges[piece->right + 1]++;
-				stats.leftEdges[piece->left + 1]++;
-				stats.topEdges[piece->top + 1]++;
-				stats.bottomEdges[piece->bottom + 1]++;
+				stats.rightEdges[piece->get_right() + 1]++;
+				stats.leftEdges[piece->get_left() + 1]++;
+				stats.topEdges[piece->get_top() + 1]++;
+				stats.bottomEdges[piece->get_bottom() + 1]++;
 
 				//Check if has pieces for the edges of the puzzle
-				if (piece->top == STRAIGHT)
+				if (piece->get_top() == S)
 				{ 
-						if (piece->left == STRAIGHT) stats.hasTL = true;
-						if (piece->right == STRAIGHT) stats.hasTR = true;
+						if (piece->get_left() == S) stats.hasTL = true;
+						if (piece->get_right() == S) stats.hasTR = true;
 				}
 
 
-				if (piece->bottom == STRAIGHT)
+				if (piece->get_bottom() == S)
 				{
-						if (piece->left == STRAIGHT) stats.hasBL = true;
-						if (piece->right == STRAIGHT) stats.hasBR = true;
+						if (piece->get_left() == S) stats.hasBL = true;
+						if (piece->get_right() == S) stats.hasBR = true;
 				}
 
 		}

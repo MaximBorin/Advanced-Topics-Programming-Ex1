@@ -1,9 +1,13 @@
 #pragma once
 #include <vector>
+#include  <algorithm>
 
-#define F -1
-#define S 0
-#define M 1
+#include "Utils.h"
+
+//Piece corners definitions
+#define F -1 //Female
+#define S 0 //Straight
+#define M 1 //Male
 #define W 2
 
 class PuzzlePiece
@@ -56,3 +60,18 @@ private:
 
 bool operator== (PuzzlePiece piece1, PuzzlePiece piece2);
 bool operator!= (PuzzlePiece piece1, PuzzlePiece piece2);
+
+
+//Checks whether the inputted value (in string format) is a valid value for a piece
+bool IsValidPuzzlePieceValue(string val);
+
+//Returns a puzze piece from an input line.
+//If the line is in an incorrect format, then NULL is returned.
+//outPieceID will contain the ID of the piece (useful in case NULL is returned for the piece).
+//If the ID has bad format, then return empty string npos
+PuzzlePiece* GetPuzzlePieceFromInputLine(string line, string* outPieceID);
+
+
+//Get jigsaw pieces from an input file
+//In case encountered an error during parsing, returns NULL
+PuzzlePiece** GetPuzzlePiecesFromInputFile(ifstream* inputFile, ofstream* outputFile, int* outNumElements);

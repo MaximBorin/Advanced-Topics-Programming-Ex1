@@ -104,3 +104,30 @@ int Solution::calculate_adjacency(int row, int column) {
 
 	return adjacency;
 }
+
+void Solution::print_to_file(ofstream* outputFile)
+{
+		if (_is_solved == false)
+				return; //Can't print an unsolved puzzle
+
+		for (int i = 0; i < _board.size(); i++)
+		{
+				string line("");
+
+				for (int j = 0; j < _board[i].size(); j++)
+				{
+						line += IntToString(_board[i][j].get_id());
+
+						if (_board[i][j].get_orientation() != 0)
+								line += " [" + IntToString(_board[i][j].get_orientation()) + "]";
+
+						if (j + 1 < _board[i].size())
+								line += " "; //If not last element in line, add an empty space
+				}
+
+				PrintMsg(line, outputFile);
+		}
+
+
+
+}

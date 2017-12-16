@@ -1,5 +1,6 @@
 #pragma once
 #include "Position.h"
+#include "Utils.h"
 
 class Solution
 {
@@ -21,6 +22,9 @@ public:
 	void set_min_piece_fit_position_indices(int* row, int* column);
 	void set_piece_in_position(PuzzlePiece piece, int row, int column);
 
+	//Prints the solution to an output file
+	void print_to_file(ofstream* outputFile);
+
 private:
 	Repository _repository;
 	
@@ -31,4 +35,7 @@ private:
 	PuzzlePiece _transparent_piece;
 	bool _rotatable;
 };
+
+
+
 

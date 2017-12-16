@@ -1,7 +1,3 @@
-Late submission of 5 days was approved by Natan. We attached his email message in these formats: NatanEmail.jpg (screenshot) and NatanEmail.EML. The reason for deadline extension is in Miluim.pdf.
-
-
-
 solution strategy description:
 
 

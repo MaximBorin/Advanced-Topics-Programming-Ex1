@@ -12,6 +12,8 @@ int main(int argc, char** argv)
 		string inputFilePath;
 		string outputFilePath;
 
+//&&&
+		/*
 		if (argc < 3 || argc > 4) //Expects minimum of 3 arguments and maximum of 4
 		{
 				return -1;
@@ -80,63 +82,156 @@ int main(int argc, char** argv)
 		//Validate the stats for a genearl type of puzzle (without assuming number of rows/columns)
 		isValidPieces = IsValidJigsawPiecesStats(stats, &outputFile);
 
+//&&&
+		*/
 
+		//manual paramter setting begin
+		isValidPieces = true;
+		numElements = 30;
+		pieces = new PuzzlePiece*[numElements];
+		rotatable = false;
+		int i = 0;
+
+		pieces[i++] = &PuzzlePiece(1, 0, 0, 1, -1);
+		pieces[i++] = &PuzzlePiece(2, -1, 0, 1, 0);
+		pieces[i++] = &PuzzlePiece(3, -1, 0, -1, 1);
+		pieces[i++] = &PuzzlePiece(4, 1, 0, 1, 1);
+		pieces[i++] = &PuzzlePiece(5, -1, 0, 0, -1);
+
+		pieces[i++] = &PuzzlePiece(6, 0, 1, -1, 1);
+		pieces[i++] = &PuzzlePiece(7, 1, 0, 0, -1);
+		pieces[i++] = &PuzzlePiece(8, 0, -1, 0, -1);
+		pieces[i++] = &PuzzlePiece(9, 0, -1, -1, 0);
+		pieces[i++] = &PuzzlePiece(10, 1, 1, 0, 0);
+
+		pieces[i++] = &PuzzlePiece(11, 0, -1, 0, 0);
+		pieces[i++] = &PuzzlePiece(12, 0, 1, 1, 0);
+		pieces[i++] = &PuzzlePiece(13, -1, 1, 1, 0);
+		pieces[i++] = &PuzzlePiece(14, -1, 0, 0, 0);
+		pieces[i++] = &PuzzlePiece(15, 0, 0, 0, 0);
+
+		// 15
+		
+		pieces[i++] = &PuzzlePiece(16, 0, 0, 1, -1);
+		pieces[i++] = &PuzzlePiece(17, -1, 0, 1, 0);
+		pieces[i++] = &PuzzlePiece(18, -1, 0, -1, 1);
+		pieces[i++] = &PuzzlePiece(19, 1, 0, 1, 1);
+		pieces[i++] = &PuzzlePiece(20, -1, 0, 0, -1);
+
+		pieces[i++] = &PuzzlePiece(21, 0, 1, -1, 1);
+		pieces[i++] = &PuzzlePiece(22, 1, 0, 0, -1);
+		pieces[i++] = &PuzzlePiece(23, 0, -1, 0, -1);
+		pieces[i++] = &PuzzlePiece(24, 0, -1, -1, 0);
+		pieces[i++] = &PuzzlePiece(25, 1, 1, 0, 0);
+
+		pieces[i++] = &PuzzlePiece(26, 0, -1, 0, 0);
+		pieces[i++] = &PuzzlePiece(27, 0, 1, 1, 0);
+		pieces[i++] = &PuzzlePiece(28, -1, 1, 1, 0);
+		pieces[i++] = &PuzzlePiece(29, -1, 0, 0, 0);
+		pieces[i++] = &PuzzlePiece(30, 0, 0, 0, 0);
+		
+		// 30
+		
 		//Attempt to solve the puzzle only if the pieces are valid
 		if (isValidPieces == true)
 		{
 
-				//Create a vector of puzzle pieces for the solution
-				//A pointer-to-pointer array was used for verification, whereas a vector will be used for the solution
+				//set general parameters: puzzle set and decomposition array
 				std::vector<PuzzlePiece> puzzle_set_input;
-
-				for (int i = 0; i < numElements; i++)
+		
+				int i;
+				for (i = 0; i < numElements; i++)
 						puzzle_set_input.push_back(*pieces[i]);
 
-
-				for (int i = 0; i < puzzle_set_input.size(); i++)
-				{
-						puzzle_set_input[i].set_piece_type_and_symetry_factor();
-				}
-
-				
-				Repository repository(puzzle_set_input, numElements);
-
-				// initialize decompositions
 				int numOf_decomps = how_many_decompositions(numElements, rotatable);
 				int** decomp_array = new int*[numOf_decomps];
+				for (i = 0; i < numOf_decomps; i++) decomp_array[i] = new int[2];
+				initialize_decomp_array(decomp_array, numElements, rotatable);
 
-				for (int i = 0; i < numOf_decomps; i++)
-				{
-						decomp_array[i] = new int[2];
+				bool puzzle_solved = false;
+
+		
+				if (rotatable) {
+						//Create a vector of puzzle pieces for the solution
+						//A pointer-to-pointer array was used for verification, whereas a vector will be used for the solution
+						
+		
+						for (int i = 0; i < puzzle_set_input.size(); i++)
+						{
+								puzzle_set_input[i].set_piece_type_and_symetry_factor();
+						}
+		
+						
+						R_Repository r_repository(puzzle_set_input, numElements);
+		
+						
+		
+		
+						// TRY TO SOLVE BY EACH DECOMPOSITION
+						for (int i = 0; i < numOf_decomps; i++)
+						{
+								int height = decomp_array[i][0];
+								int width = decomp_array[i][1];
+
+								R_Solution r_solution(r_repository, height, width, rotatable);
+								R_Solution r_final_solution(r_repository, height, width, rotatable);
+
+
+								r_solution.algorithm_step(&r_final_solution);
+
+								if (r_final_solution.is_solved())
+								{
+										puzzle_solved = true;
+										std::cout << "puzzle solved!\n\n" << std::endl;
+//&&&									r_final_solution.print_to_file(&outputFile);
+										break;
+								}
+						}
+
+						if (puzzle_solved == false)
+						{
+								std::cout << "puzzle unsolvable\n\n" << std::endl;
+//&&&							PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
+						}
+
 				}
-				initialize_decomp_array(decomp_array, numElements);
 
-
-
-				// TRY TO SOLVE BY EACH DECOMPOSITION
-				for (int i = 0; i < numOf_decomps; i++)
+				else    // unrotatable case
 				{
+
+					NR_Repository nr_repository(puzzle_set_input, numElements);
+
+					// TRY TO SOLVE BY EACH DECOMPOSITION
+					for (int i = 0; i < numOf_decomps; i++)
+					{
 						int height = decomp_array[i][0];
 						int width = decomp_array[i][1];
-						Solution solution(repository, height, width, true);
-						Solution::set_solved(false);
 
-						solution.algorithm_step();
-						if (Solution::is_solved())
+						NR_Solution nr_solution(nr_repository, height, width);
+						NR_Solution nr_final_solution(nr_repository, height, width);
+
+
+						nr_solution.algorithm_step(&nr_final_solution);
+
+						if (nr_final_solution.is_solved())
 						{
-								std::cout << "puzzle solved!\n\n" << std::endl;
-								solution.print_to_file(&outputFile);
-								break;
+							puzzle_solved = true;
+							std::cout << "puzzle solved!\n\n" << std::endl;
+							//&&&									r_final_solution.print_to_file(&outputFile);
+							break;
 						}
-				}
+					}
 
-				if (Solution::is_solved() == false)
-				{
+
+					if (puzzle_solved == false)
+					{
 						std::cout << "puzzle unsolvable\n\n" << std::endl;
-						PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
+						//&&&							PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
+					}
 				}
-
-				
+			// FREE DECOMPOSITION MEMORY
+			for (i = 0; i < numOf_decomps; i++) delete[] decomp_array[i];
+			delete[] decomp_array;
 		}
 
 		// FREE PUZZLE MEMORY

@@ -12,8 +12,6 @@ int main(int argc, char** argv)
 		string inputFilePath;
 		string outputFilePath;
 
-//&&&
-		/*
 		if (argc < 3 || argc > 4) //Expects minimum of 3 arguments and maximum of 4
 		{
 				return -1;
@@ -29,7 +27,7 @@ int main(int argc, char** argv)
 						rotatable = true;
 						continue;
 				}
-						
+
 				//Assumes that input path will always come before output path, regardless of where -rotate is placed
 				if (isReadInputPath) //If already read the input path argument
 				{
@@ -40,7 +38,7 @@ int main(int argc, char** argv)
 						inputFilePath = arg;
 						isReadInputPath = true;
 				}
-						
+
 
 		}
 
@@ -76,61 +74,11 @@ int main(int argc, char** argv)
 		if (pieces == NULL)
 				return -1; //Encountered error during parsing and already printed it
 
-		//Get statistics about the jigsaw pieces
+									 //Get statistics about the jigsaw pieces
 		stats = GetJigsawPiecesStats(pieces, numElements);
 
 		//Validate the stats for a genearl type of puzzle (without assuming number of rows/columns)
-		isValidPieces = IsValidJigsawPiecesStats(stats, &outputFile);
-
-//&&&
-		*/
-
-		//manual paramter setting begin
-		isValidPieces = true;
-		numElements = 30;
-		pieces = new PuzzlePiece*[numElements];
-		rotatable = false;
-		int i = 0;
-
-		pieces[i++] = &PuzzlePiece(1, 0, 0, 1, -1);
-		pieces[i++] = &PuzzlePiece(2, -1, 0, 1, 0);
-		pieces[i++] = &PuzzlePiece(3, -1, 0, -1, 1);
-		pieces[i++] = &PuzzlePiece(4, 1, 0, 1, 1);
-		pieces[i++] = &PuzzlePiece(5, -1, 0, 0, -1);
-
-		pieces[i++] = &PuzzlePiece(6, 0, 1, -1, 1);
-		pieces[i++] = &PuzzlePiece(7, 1, 0, 0, -1);
-		pieces[i++] = &PuzzlePiece(8, 0, -1, 0, -1);
-		pieces[i++] = &PuzzlePiece(9, 0, -1, -1, 0);
-		pieces[i++] = &PuzzlePiece(10, 1, 1, 0, 0);
-
-		pieces[i++] = &PuzzlePiece(11, 0, -1, 0, 0);
-		pieces[i++] = &PuzzlePiece(12, 0, 1, 1, 0);
-		pieces[i++] = &PuzzlePiece(13, -1, 1, 1, 0);
-		pieces[i++] = &PuzzlePiece(14, -1, 0, 0, 0);
-		pieces[i++] = &PuzzlePiece(15, 0, 0, 0, 0);
-
-		// 15
-		
-		pieces[i++] = &PuzzlePiece(16, 0, 0, 1, -1);
-		pieces[i++] = &PuzzlePiece(17, -1, 0, 1, 0);
-		pieces[i++] = &PuzzlePiece(18, -1, 0, -1, 1);
-		pieces[i++] = &PuzzlePiece(19, 1, 0, 1, 1);
-		pieces[i++] = &PuzzlePiece(20, -1, 0, 0, -1);
-
-		pieces[i++] = &PuzzlePiece(21, 0, 1, -1, 1);
-		pieces[i++] = &PuzzlePiece(22, 1, 0, 0, -1);
-		pieces[i++] = &PuzzlePiece(23, 0, -1, 0, -1);
-		pieces[i++] = &PuzzlePiece(24, 0, -1, -1, 0);
-		pieces[i++] = &PuzzlePiece(25, 1, 1, 0, 0);
-
-		pieces[i++] = &PuzzlePiece(26, 0, -1, 0, 0);
-		pieces[i++] = &PuzzlePiece(27, 0, 1, 1, 0);
-		pieces[i++] = &PuzzlePiece(28, -1, 1, 1, 0);
-		pieces[i++] = &PuzzlePiece(29, -1, 0, 0, 0);
-		pieces[i++] = &PuzzlePiece(30, 0, 0, 0, 0);
-		
-		// 30
+		isValidPieces = IsValidJigsawPiecesStats(stats, rotatable, &outputFile);
 		
 		//Attempt to solve the puzzle only if the pieces are valid
 		if (isValidPieces == true)
@@ -139,32 +87,28 @@ int main(int argc, char** argv)
 				//set general parameters: puzzle set and decomposition array
 				std::vector<PuzzlePiece> puzzle_set_input;
 		
-				int i;
-				for (i = 0; i < numElements; i++)
+				//Create a vector of puzzle pieces for the solution
+				//A pointer-to-pointer array was used for verification, whereas a vector will be used for the solution
+				for (int i = 0; i < numElements; i++)
 						puzzle_set_input.push_back(*pieces[i]);
 
 				int numOf_decomps = how_many_decompositions(numElements, rotatable);
 				int** decomp_array = new int*[numOf_decomps];
-				for (i = 0; i < numOf_decomps; i++) decomp_array[i] = new int[2];
+				for (int i = 0; i < numOf_decomps; i++) decomp_array[i] = new int[2];
 				initialize_decomp_array(decomp_array, numElements, rotatable);
 
 				bool puzzle_solved = false;
 
-		
-				if (rotatable) {
-						//Create a vector of puzzle pieces for the solution
-						//A pointer-to-pointer array was used for verification, whereas a vector will be used for the solution
-						
-		
-						for (int i = 0; i < puzzle_set_input.size(); i++)
+				if (rotatable)
+				{
+
+						for (unsigned int i = 0; i < puzzle_set_input.size(); i++)
 						{
 								puzzle_set_input[i].set_piece_type_and_symetry_factor();
 						}
 		
 						
 						R_Repository r_repository(puzzle_set_input, numElements);
-		
-						
 		
 		
 						// TRY TO SOLVE BY EACH DECOMPOSITION
@@ -176,14 +120,13 @@ int main(int argc, char** argv)
 								R_Solution r_solution(r_repository, height, width, rotatable);
 								R_Solution r_final_solution(r_repository, height, width, rotatable);
 
-
 								r_solution.algorithm_step(&r_final_solution);
 
 								if (r_final_solution.is_solved())
 								{
 										puzzle_solved = true;
 										std::cout << "puzzle solved!\n\n" << std::endl;
-//&&&									r_final_solution.print_to_file(&outputFile);
+										r_final_solution.print_to_file(&outputFile);
 										break;
 								}
 						}
@@ -191,7 +134,7 @@ int main(int argc, char** argv)
 						if (puzzle_solved == false)
 						{
 								std::cout << "puzzle unsolvable\n\n" << std::endl;
-//&&&							PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
+								PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
 						}
 
 				}
@@ -217,7 +160,7 @@ int main(int argc, char** argv)
 						{
 							puzzle_solved = true;
 							std::cout << "puzzle solved!\n\n" << std::endl;
-							//&&&									r_final_solution.print_to_file(&outputFile);
+							nr_final_solution.print_to_file(&outputFile);
 							break;
 						}
 					}
@@ -226,11 +169,15 @@ int main(int argc, char** argv)
 					if (puzzle_solved == false)
 					{
 						std::cout << "puzzle unsolvable\n\n" << std::endl;
-						//&&&							PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
+						PrintMsg("Cannot solve puzzle: it seems that there is no proper solution", &outputFile);
 					}
 				}
+
+
 			// FREE DECOMPOSITION MEMORY
-			for (i = 0; i < numOf_decomps; i++) delete[] decomp_array[i];
+			for (int i = 0; i < numOf_decomps; i++)
+					delete[] decomp_array[i];
+
 			delete[] decomp_array;
 		}
 

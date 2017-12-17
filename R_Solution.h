@@ -30,10 +30,12 @@ private:
 	
 	int _height;
 	int _width;
+	bool _rotatable;
+	PuzzlePiece _transparent_piece;
 	static bool _is_solved;
 	std::vector<std::vector<PuzzlePiece>> _board;
-	PuzzlePiece _transparent_piece;
-	bool _rotatable;
+	
+	
 };
 
 

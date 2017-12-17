@@ -40,5 +40,5 @@ int GetEdgesCountByValType(PuzzlePiecesStats stats, EdgeTypeValueIndexes edgeVal
 //Validates that the stats of jigsaw pieces make sense for a general jigsaw puzzle (num of rows and columns unknown)
 //If False is returned, then they aren't valdi for a puzzle.
 //However, even if True is returned, it does NOT mean the puzzle is necessarily solvable. We'll need to try solving it to make sure. 
-bool IsValidJigsawPiecesStats(PuzzlePiecesStats stats, ofstream* outputFile);
+bool IsValidJigsawPiecesStats(PuzzlePiecesStats stats, bool rotatable, ofstream* outputFile);
 

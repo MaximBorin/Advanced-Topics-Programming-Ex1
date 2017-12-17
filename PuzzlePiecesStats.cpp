@@ -43,7 +43,7 @@ int GetEdgesCountByValType(PuzzlePiecesStats stats, EdgeTypeValueIndexes edgeVal
 
 
 
-bool IsValidJigsawPiecesStats(PuzzlePiecesStats stats, ofstream* outputFile)
+bool IsValidJigsawPiecesStats(PuzzlePiecesStats stats, bool rotatable, ofstream* outputFile)
 {
 		bool res = true;
 
@@ -58,23 +58,23 @@ bool IsValidJigsawPiecesStats(PuzzlePiecesStats stats, ofstream* outputFile)
 				res = false;
 		}
 
-		//A valid puzzle must have TL, TR, BL and BR pieces
-		if (stats.hasTL == false)
+		//A valid puzzle must have TL, TR, BL and BR pieces, unless it's rotatable (then it's a case-by-case chekc that's best covered during the solution)
+		if (stats.hasTL == false && !rotatable)
 		{
 				PrintMsg("Cannot solve puzzle: missing corner element: TL", outputFile);
 				res = false;
 		}
-		if (stats.hasTR == false)
+		if (stats.hasTR == false && !rotatable)
 		{
 				PrintMsg("Cannot solve puzzle: missing corner element: TR", outputFile);
 				res = false;
 		}
-		if (stats.hasBL == false)
+		if (stats.hasBL == false && !rotatable)
 		{
 				PrintMsg("Cannot solve puzzle: missing corner element: BL", outputFile);
 				res = false;
 		}
-		if (stats.hasBR == false)
+		if (stats.hasBR == false && !rotatable)
 		{
 				PrintMsg("Cannot solve puzzle: missing corner element: BR", outputFile);
 				res = false;

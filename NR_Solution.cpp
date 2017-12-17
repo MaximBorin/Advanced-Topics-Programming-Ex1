@@ -52,9 +52,9 @@ void NR_Solution::algorithm_step(NR_Solution* final_nr_solution_ptr) {
 	std::vector<PuzzlePiece> fit_vector = next_position.get_fit_vector();
 
 	// WE ARE SET - EXECUTE NEXT STEP FOR EACH OF THE 
-	for each (PuzzlePiece piece in fit_vector) {
+	for (unsigned int i = 0; i < fit_vector.size(); i++) {
 		NR_Solution copy_sol(*this);
-		copy_sol.set_piece_in_position(piece.get_id(), row, column);
+		copy_sol.set_piece_in_position(fit_vector[i].get_id(), row, column);
 		copy_sol.algorithm_step(final_nr_solution_ptr);
 	}
 }
@@ -102,4 +102,30 @@ int NR_Solution::calculate_adjacency(int row, int column) {
 	if ((column < _width - 1) && (_board[row][column + 1].get_id() != 0)) adjacency++;
 
 	return adjacency;
+}
+
+
+void NR_Solution::print_to_file(ofstream* outputFile)
+{
+		if (_is_solved == false)
+				return; //Can't print an unsolved puzzle
+
+		for (unsigned int i = 0; i < _board.size(); i++)
+		{
+				string line("");
+
+				for (unsigned int j = 0; j < _board[i].size(); j++)
+				{
+						line += IntToString(_board[i][j].get_id());
+
+						if (_board[i][j].get_orientation() != 0)
+								line += " [" + IntToString(_board[i][j].get_orientation()) + "]";
+
+						if (j + 1 < _board[i].size())
+								line += " "; //If not last element in line, add an empty space
+				}
+
+				PrintMsg(line, outputFile);
+		}
+
 }

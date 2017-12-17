@@ -97,11 +97,11 @@ void PuzzlePiece::set_piece_type_and_symetry_factor() {
 	proto_vec.push_back(smsm); proto_vec.push_back(smmm); proto_vec.push_back(mmmm);
 
 	int rotation, type, symetry_factor;
-	for each (PuzzlePiece proto_piece in proto_vec) {
+	for (unsigned int i = 0; i < proto_vec.size(); i++) {
 		for (rotation = 0; rotation < 360; rotation += 90) {
-			if (*this == proto_piece) {
-				type = (-1 * proto_piece.get_id()) - 1;
-				symetry_factor = proto_piece.get_symetry_factor();
+			if (*this == proto_vec[i]) {
+				type = (-1 * proto_vec[i].get_id()) - 1;
+				symetry_factor = proto_vec[i].get_symetry_factor();
 				(*this)._type = type;
 				(*this)._symetry_factor = symetry_factor;
 			}
@@ -120,6 +120,21 @@ PuzzlePiece* GetPuzzlePieceFromInputLine(string line, string* outPieceID)
 {
 		//Get all elements of the piece from the line
 		vector<string> inputElems = split(line, ' ');
+
+		//Remove all empty elements in the vector (to deal with double spaces)
+		vector<std::string>::iterator it = inputElems.begin();
+		while (it != inputElems.end())
+		{
+				if (*it == "")
+				{
+						it = inputElems.erase(it);
+				}
+				else
+				{
+						++it;
+				}
+		}
+
 
 		*outPieceID = inputElems[0]; //Put the first element (the 'ID' in output var before checking errors)
 

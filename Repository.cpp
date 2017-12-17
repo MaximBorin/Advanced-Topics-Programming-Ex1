@@ -54,9 +54,9 @@ Repository::Repository(std::vector<PuzzlePiece> puzzle_set, int numOf_pieces)
 
 	int proto_index;
 
-	for each(PuzzlePiece piece in puzzle_set) {
-		proto_index = piece.get_type();
-		_sorted_puzzle_set[proto_index].push_back(piece);
+	for (unsigned int i = 0; i < puzzle_set.size(); i++) {
+		proto_index = puzzle_set[i].get_type();
+		_sorted_puzzle_set[proto_index].push_back(puzzle_set[i]);
 	}
 }
 
@@ -76,8 +76,8 @@ PuzzlePiece Repository::pop_by_prototype(int proto_index) {
 }
 
 bool Repository::is_empty() {
-	for each (std::vector<PuzzlePiece> type_vec in _sorted_puzzle_set) {
-		if (!type_vec.empty()) return false;
+		for (unsigned int i = 0; i < _sorted_puzzle_set.size(); i++) {
+		if (!_sorted_puzzle_set[i].empty()) return false;
 	}
 	return true;
 }
@@ -88,10 +88,10 @@ std::vector<PuzzlePiece> Repository::get_all_unique_pieces_fitting_this_slot(Slo
 	int last_piece_index, rotation;
 	PuzzlePiece piece;
 
-	for each (std::vector<PuzzlePiece> type_vec in _sorted_puzzle_set) {
-		if (!type_vec.empty()) {
-			last_piece_index = type_vec.size() - 1;
-			piece = type_vec[last_piece_index];
+	for (unsigned int i = 0; i < _sorted_puzzle_set.size(); i++) {
+		if (!_sorted_puzzle_set[i].empty()) {
+			last_piece_index = _sorted_puzzle_set[i].size() - 1;
+			piece = _sorted_puzzle_set[i][last_piece_index];
 			//for every unique orientation
 			//	if fits the slot - push in specific orientation
 			if (!rotatable) { 

@@ -11,9 +11,10 @@ public:
 	std::vector<PuzzlePiece> get_fit_vector();
 
 private:
+	Slot slot;
 	int _row;
 	int _column;
 	std::vector<PuzzlePiece> _fit_vector;
-	Slot slot;
+	
 };
 

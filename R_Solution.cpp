@@ -54,9 +54,9 @@ void R_Solution::algorithm_step(R_Solution* r_final_solution_ptr) {
 	std::vector<PuzzlePiece> fit_vector = next_position.get_fit_vector();
 
 	// WE ARE SET - EXECUTE NEXT STEP FOR EACH OF THE 
-	for each (PuzzlePiece piece in fit_vector) {
+	for (unsigned int i = 0; i < fit_vector.size(); i++) {
 		R_Solution copy_sol(*this);
-		copy_sol.set_piece_in_position(piece, row, column);
+		copy_sol.set_piece_in_position(fit_vector[i], row, column);
 		copy_sol.algorithm_step(r_final_solution_ptr);
 	}
 }
@@ -111,11 +111,11 @@ void R_Solution::print_to_file(ofstream* outputFile)
 		if (_is_solved == false)
 				return; //Can't print an unsolved puzzle
 
-		for (int i = 0; i < _board.size(); i++)
+		for (unsigned int i = 0; i < _board.size(); i++)
 		{
 				string line("");
 
-				for (int j = 0; j < _board[i].size(); j++)
+				for (unsigned int j = 0; j < _board[i].size(); j++)
 				{
 						line += IntToString(_board[i][j].get_id());
 

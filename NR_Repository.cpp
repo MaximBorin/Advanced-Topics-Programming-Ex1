@@ -66,8 +66,8 @@ std::vector<PuzzlePiece> NR_Repository::get_all_unique_pieces_fitting_this_slot(
 }
 
 bool NR_Repository::is_unique(std::vector<PuzzlePiece> fit_vector, PuzzlePiece piece) {
-	for each (PuzzlePiece vector_piece in fit_vector) { 
-		if (vector_piece == piece) return false;
+		for (unsigned int i = 0; i < fit_vector.size(); i++) {
+		if (fit_vector[i] == piece) return false;
 	}
 	return true;
 }

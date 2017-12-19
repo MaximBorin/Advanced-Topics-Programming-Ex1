@@ -64,7 +64,7 @@ void R_Solution::algorithm_step(R_Solution* r_final_solution_ptr) {
 void R_Solution::set_min_piece_fit_position_indices(int* row, int* column) {
 	
 	int i, j;
-	int min_size_of_position_fit_pieces = _height * _width;
+	int min_size_of_position_fit_pieces = _height * _width + 1;
 	bool slot_available;
 	bool slot_adjacency_greater_than_1;
 

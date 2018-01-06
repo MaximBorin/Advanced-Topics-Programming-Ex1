@@ -29,15 +29,32 @@ int how_many_decompositions(int numOf_pieces, bool rotatable) {
 	return how_many_decomps;
 }
 
-void initialize_decomp_array(int** decomps_array, int numOf_pieces) {
+void initialize_decomp_array(int** decomps_array, int numOf_pieces, bool rotatable) {
+
 	int i;
 	int decomp_index = 0;
 
-	for (i = 1; i*i < numOf_pieces; i++) {
-		if (numOf_pieces % i == 0) {
-			decomps_array[decomp_index][0] = i;
-			decomps_array[decomp_index][1] = numOf_pieces/i;
-			decomp_index++;
+	if (rotatable) {
+
+		for (i = 1; i*i < numOf_pieces; i++) {
+			if (numOf_pieces % i == 0) {
+				decomps_array[decomp_index][0] = i;
+				decomps_array[decomp_index][1] = numOf_pieces / i;
+				decomp_index++;
+			}
+		}
+	}
+	else {
+		for (i = 1; i*i < numOf_pieces; i++) {
+			if (numOf_pieces % i == 0) {
+
+				decomps_array[decomp_index][0] = i;
+				decomps_array[decomp_index][1] = numOf_pieces / i;
+				decomps_array[decomp_index + 1][0] = numOf_pieces / i;
+				decomps_array[decomp_index + 1][1] = i;
+
+				decomp_index += 2;
+			}
 		}
 	}
 
